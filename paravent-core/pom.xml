@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>paravent-queue</artifactId>
+        <groupId>net.christophe.genin.spring.boot</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.christophe.genin.spring.boot.paravent.queue</groupId>
+    <artifactId>paravent-core</artifactId>
+
+    <dependencies>
+        <!-- Spring boot -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <!-- Swagger 2 -->
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Vertx -->
+
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-rx-java2</artifactId>
+        </dependency>
+        <!-- Functional -->
+
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+        </dependency>
+
+        <!-- BD -->
+
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <!-- Graphql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java-spring-boot-starter-webmvc</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- TEST -->
+        <dependency>
+            <groupId>com.openpojo</groupId>
+            <artifactId>openpojo</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-unit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <db.driver.generation>org.postgresql.Driver</db.driver.generation>
+        <db.url.generation>jdbc:postgresql://localhost:5432/cqueue</db.url.generation>
+        <db.username.generation>cqueue</db.username.generation>
+        <db.password.generation>cqueue</db.password.generation>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>${jooq.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+
+                            <jdbc>
+                                <driver>${db.driver.generation}</driver>
+                                <url>${db.url.generation}</url>
+                                <user>${db.username.generation}</user>
+                                <password>${db.password.generation}</password>
+                            </jdbc>
+                            <generator>
+                                <database>
+
+                                    <name>org.jooq.meta.postgres.PostgresDatabase</name>
+
+                                    <!-- All elements that are generated from your schema (A Java regular expression.
+                                         Use the pipe to separate several expressions) Watch out for
+                                         case-sensitivity. Depending on your database, this might be
+                                         important!
+
+                                         You can create case-insensitive regular expressions using this syntax: (?i:expr)
+
+                                         Whitespace is ignored and comments are possible.
+                                         -->
+                                    <includes>.*</includes>
+
+                                    <!-- All elements that are excluded from your schema (A Java regular expression.
+                                         Use the pipe to separate several expressions). Excludes match before
+                                         includes, i.e. excludes have a higher priority -->
+                                    <excludes>
+                                        flyway_schema_history
+                                    </excludes>
+
+                                    <!-- The schema that is used locally as a source for meta information.
+                                         This could be your development schema or the production schema, etc
+                                         This cannot be combined with the schemata element.
+
+                                         If left empty, jOOQ will generate all available schemata. See the
+                                         manual's next section to learn how to generate several schemata -->
+                                    <inputSchema>public</inputSchema>
+                                </database>
+                                <target>
+                                    <packageName>net.christophe.genin.spring.boot.paravent.queue.core.jooq</packageName>
+                                    <directory>target/generated-sources/java</directory>
+                                </target>
+                            </generator>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

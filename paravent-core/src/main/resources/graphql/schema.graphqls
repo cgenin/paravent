@@ -1,0 +1,93 @@
+enum QueueState {
+    created, success, error, running, queued, all
+}
+
+enum QueueType {
+    metadata, document, all
+}
+
+type Queue {
+    key:String!
+
+    uuid:ID!
+
+    collectedAt:String!
+
+    type:QueueType!
+
+    state:QueueState!
+
+    start:String
+
+    stop:String
+}
+
+type Metadata  {
+    queue:Queue!
+
+    payload:String!
+}
+
+type Document  {
+
+    queue:Queue!
+
+    metadata:String
+
+    filename:String
+
+    extension:String
+
+    bin:String!
+}
+
+
+type QueuePage {
+    total:Int!
+    result:[Queue]
+}
+
+type MetadataPage {
+    total:Int!
+    result:[Metadata]
+}
+
+type DocumentPage {
+    total:Int!
+    result:[Document]
+}
+
+enum TaskState {
+    start, registered, stop
+}
+
+type Task {
+    name:String!
+    state:TaskState!
+}
+
+input QueueFilter {
+    queueType:QueueType = all
+    queueState:QueueState = all
+}
+
+type Query {
+    queue(filter: QueueFilter={}, skip: Int = 0, first: Int = 10): QueuePage
+    metadata(skip: Int = 0, first: Int = 10):MetadataPage
+    document(skip: Int = 0, first: Int = 10):DocumentPage
+    task:[Task]
+}
+
+type Mutation {
+    startAll:[Task]
+    stopAll:[Task]
+    start(ids:[ID]!):[Task]
+    stop(ids:[ID]!):[Task]
+
+    addToQueue(ids:[ID]!):Int
+}
+
+schema {
+    query: Query
+    mutation : Mutation
+}
